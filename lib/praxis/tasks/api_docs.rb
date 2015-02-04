@@ -7,6 +7,13 @@ namespace :praxis do
     generator = Praxis::RestfulDocGenerator.new(Dir.pwd)
   end
 
+  task :docs => [:api_docs] do
+    require 'fileutils'
+    path = File.expand_path("../../../", __FILE__) + "/api_browser"
+    puts "node '#{path}/index.js' '#{Dir.pwd}/api_docs'"
+    `node '#{path}/index.js' '#{Dir.pwd}/api_docs'`
+  end
+
   desc "Run API Documentation Browser"
   task :doc_browser, [:port] => :api_docs do |t, args|
     args.with_defaults port: 4567
@@ -23,8 +30,8 @@ namespace :praxis do
       run lambda { |env| [404, {'Content-Type' => 'text/plain'}, ['Not Found']] }
     end
 
-    
+
     Rack::Server.start app: app, Port: args[:port]
   end
-  
+
 end
